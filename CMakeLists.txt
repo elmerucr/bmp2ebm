@@ -11,10 +11,10 @@ include_directories(
     src/
 )
 
-add_subdirectory(src/)
+# add_subdirectory(src/)
 
 add_executable(
-    bmp2eb,
+    bmp2ebm
     src/main.cpp)
 
 target_link_libraries(bmp2ebm ${SDL2_LIBRARIES})
