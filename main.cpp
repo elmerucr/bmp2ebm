@@ -81,29 +81,30 @@ int main(int argc, char **argv)
 
 	if( wrong_width | wrong_height )
 	{
-		printf("[picture2asm] error: image width or height not a power of 2, not a multiple of 8 or larger than 1024\n");
+		printf("[picture2asm] error: image width and/or height not a power of 2, not a multiple of 8 or larger than 1024\n");
 		printf("[picture2asm] exiting...\n");
 		exit(1);
 	}
 
 	const char *size_in_binary[] =
 	{
-		"%00000000",
-		"%00000001",
-		"%00000010",
-		"%00000011",
-		"%00000100",
-		"%00000101",
-		"%00000110",
-		"%00000111"
+		"0000",
+		"0001",
+		"0010",
+		"0011",
+		"0100",
+		"0101",
+		"0110",
+		"0111"
 	};
 
 	printf("\talign	5\t\t; blit data must be 32 bytes (2^5) aligned\n");
 	printf("<something>\n");
 	printf("\tDC.B\t%%00000101\t; flags 0 - multicolor and bitmap mode\n");
 	printf("\tDC.B\t%%00000000\t; flags 1 - empty\n");
-	printf("\tDC.B\t%s\t; width 2^%u = %u tile(s) = %u pixels\n", size_in_binary[width_tile_log2], width_tile_log2, 1 << width_tile_log2, 1 << (width_tile_log2 + 3));
-	printf("\tDC.B\t%s\t; height 2^%u = %u tile(s) = %u pixels\n", size_in_binary[height_tile_log2], height_tile_log2, 1 << height_tile_log2, 1 << (height_tile_log2 + 3));
+	printf("\tDC.B\t%%%s%s\t; height 2^%u = %u tile(s) = %u pixels", size_in_binary[height_tile_log2], size_in_binary[width_tile_log2], height_tile_log2, 1 << height_tile_log2, 1 << (height_tile_log2 + 3));
+	printf(", width 2^%u = %u tile(s) = %u pixels\n", width_tile_log2, 1 << width_tile_log2, 1 << (width_tile_log2 + 3));
+	printf("\tDC.B\t%%00000000\t; unused\n");
 	printf("\tDC.W\t$0000\t\t; x\n");
 	printf("\tDC.W\t$0000\t\t; y\n");
 	printf("\tDC.W\t$0000\t\t; foreground color\n");
@@ -133,7 +134,7 @@ int main(int argc, char **argv)
 				alpha = transform(data[i+3]);
 				break;
 		}
-		printf("$%01X%01X%01X%01X%c", alpha, transform(data[i]), transform(data[i+1]), transform(data[i+2]), (((i/n)+1) % 16) ? ',' : 0);
+		printf("$%01X%01X%01X%01X%s", alpha, transform(data[i]), transform(data[i+1]), transform(data[i+2]), (((i/n)+1) % 16) ? "," : "");
 	}
 
 	printf("\n");
